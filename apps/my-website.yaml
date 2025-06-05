@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: Namespace
+metadata:  
+  name: my-website
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-website
+  namespace: my-website
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: my-website
+  template:
+    metadata:
+      labels:
+        app: my-website
+    spec:
+      containers:
+      - name: my-website
+        image: ghcr.io/jakobinn/my-website:1.0
+        ports:
+        - containerPort: 80
+        resources:
+          limits:
+            memory: 64Mi
+            cpu: 100m
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-website
+  namespace: my-website
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+  selector:
+    app: my-website
